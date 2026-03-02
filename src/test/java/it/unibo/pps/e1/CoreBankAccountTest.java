@@ -6,34 +6,35 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class BronzeBankAccountTest extends CoreBankAccountTest {
+public class CoreBankAccountTest {
+
+    protected BankAccount account;
 
     @BeforeEach
-    @Override
     public void init() {
-        this.account = new BronzeBankAccount(new CoreBankAccount());
+        this.account = new CoreBankAccount();
+    }
+
+    @Test
+    public void testInitiallyEmpty() {
+        assertEquals(0, this.account.getBalance());
+    }
+
+    @Test
+    public void testCanDeposit() {
+        int amount = 1000;
+        this.account.deposit(amount);
+        assertEquals(amount, this.account.getBalance());
     }
 
     @ParameterizedTest
     @CsvSource({
-            "1000, 50, 950",
-            "1000, 200, 799"
+            "1000, 200, 800"
     })
-    @Override
     public void testCanWithdraw(int deposit, int withdraw, int expectedBalance) {
         this.account.deposit(deposit);
         this.account.withdraw(withdraw);
         assertEquals(expectedBalance, this.account.getBalance());
     }
-
-    @Test
-    public void testCannotWithdrawMoreThanAvailable() {
-        int depositAmount = 1000;
-        int withdrawAmount = depositAmount + 200;
-        this.account.deposit(depositAmount);
-        assertThrows(IllegalStateException.class, () -> this.account.withdraw(withdrawAmount));
-    }
-
 }

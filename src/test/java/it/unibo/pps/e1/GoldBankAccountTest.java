@@ -6,44 +6,29 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class GoldBankAccountTest {
+public class GoldBankAccountTest extends CoreBankAccountTest {
 
-    private GoldBankAccount account;
+    private static final int GOLD_ACCOUNT_LIMIT = 500;
 
     @BeforeEach
-    void init(){
+    @Override
+    public void init() {
         this.account = new GoldBankAccount(new CoreBankAccount());
     }
 
     @Test
-    public void testInitiallyEmpty() {
-        assertEquals(0, this.account.getBalance());
-    }
-
-    @Test
-    public void testCanDeposit() {
-        this.account.deposit(1000);
-        assertEquals(1000, this.account.getBalance());
-    }
-
-    @Test
-    public void testCanWithdraw() {
-        this.account.deposit(1000);
-        this.account.withdraw(200);
-        assertEquals(800, this.account.getBalance());
-    }
-
-    @Test
-    public void testCanWithdrawUpTo500NegativeBalance(){
-        this.account.deposit(1000);
-        this.account.withdraw(1500);
-        assertEquals(-500, this.account.getBalance());
+    public void testCanWithdrawUpTo500NegativeBalance() {
+        int depositAmount = 1000;
+        this.account.deposit(depositAmount);
+        this.account.withdraw(depositAmount + GOLD_ACCOUNT_LIMIT);
+        assertEquals(-GOLD_ACCOUNT_LIMIT, this.account.getBalance());
     }
 
     @Test
     public void testCannotWithdrawOver500NegativeBalance() {
-        this.account.deposit(1000);
-        assertThrows(IllegalStateException.class, () -> this.account.withdraw(1501));
+        int depositAmount = 1000;
+        this.account.deposit(depositAmount);
+        assertThrows(IllegalStateException.class, () -> this.account.withdraw(depositAmount + GOLD_ACCOUNT_LIMIT + 1));
     }
 
 }
