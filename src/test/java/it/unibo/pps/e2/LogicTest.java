@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class LogicTest {
 
-    private static final int BOARD_SIZE = 9;
+    private static final int BOARD_SIZE = 5;
     private static final int CENTER = BOARD_SIZE / 2;
     private static final Pair<Integer, Integer> KNIGHT = new Pair<>(CENTER, CENTER);
     private static final Pair<Integer, Integer> PAWN = new Pair<>(0, 0);
@@ -31,8 +31,20 @@ public class LogicTest {
     }
 
     @Test
+    public void testValidBoardSize() {
+        assertThrows(IllegalArgumentException.class, () -> this.logics = new LogicsImpl(1, PAWN, KNIGHT));
+    }
+
+    @Test
+    public void testPawnAndKnightCannotBeInTheSameInitialCell() {
+        Pair<Integer, Integer> position = new Pair<>(0, 0);
+        assertThrows(IllegalArgumentException.class, () -> this.logics = new LogicsImpl(BOARD_SIZE, position, position));
+    }
+
+    @Test
     public void testMoveOutOfBounds() {
         assertThrows(IndexOutOfBoundsException.class, () -> this.logics.hit(-1, -1));
+        assertThrows(IndexOutOfBoundsException.class, () -> this.logics.hit(-BOARD_SIZE, BOARD_SIZE));
     }
 
     @ParameterizedTest
